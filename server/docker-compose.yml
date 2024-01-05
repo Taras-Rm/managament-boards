@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  dev-db:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=post1235
+      - POSTGRES_DB=managament-boards
+    networks:
+      - managament_boards
+  test-db:
+    image: postgres:latest
+    ports:
+      - 5435:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=post1235
+      - POSTGRES_DB=managament-boards
+    networks:
+      - managament_boards
+
+networks:
+  managament_boards:
