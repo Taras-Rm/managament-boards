@@ -11,8 +11,9 @@ datasource db {
 }
 
 model Board {
-  id   Int    @id @default(autoincrement())
-  name String
+  id    Int    @id @default(autoincrement())
+  name  String
+  alias String @default("")
 
   columns Column[]
 
@@ -22,7 +23,8 @@ model Board {
 model Column {
   id Int @id @default(autoincrement())
 
-  name String
+  name     String
+  position Int    @default(0)
 
   boardId Int
   board   Board @relation(fields: [boardId], references: [id], onDelete: Cascade)

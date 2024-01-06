@@ -29,9 +29,9 @@ export class BoardsController {
     return this.boardsService.editBoard(boardId, dto);
   }
 
-  @Get(':id')
-  getBoard(@Param('id', ParseIntPipe) boardId: number) {
-    return this.boardsService.getBoardById(boardId);
+  @Get(':alias')
+  getBoardByAlias(@Param('alias') boardAlias: string) {
+    return this.boardsService.getBoardByAlias(boardAlias);
   }
 
   @Delete(':id')
