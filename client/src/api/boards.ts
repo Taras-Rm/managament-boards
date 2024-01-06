@@ -18,6 +18,18 @@ export const createBoard = async ({ name }: CreateBoardI) => {
   return response.data;
 };
 
+export interface EditBoardI {
+  name: string;
+  boardId: number;
+}
+
+export const editBoard = async ({ name, boardId }: EditBoardI) => {
+  const response = await api.put(`/boards/${boardId}`, {
+    name,
+  });
+  return response.data;
+};
+
 export const findBoard = async (alias: string) => {
   const response = await api.get(`/boards/${alias}`);
   return response.data;

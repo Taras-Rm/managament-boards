@@ -1,12 +1,14 @@
-import { Spin, Typography, message } from "antd";
-import { BoardI } from "../types/board";
-import { ColumnI } from "../types/column";
+import { Button, Spin, Typography, message } from "antd";
+import { BoardI } from "../../types/board";
+import { ColumnI } from "../../types/column";
 
-import Column from "./Column";
+import Column from "../Column";
 import { DndContext } from "@dnd-kit/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getBoardColumns } from "../api/boards";
-import { deleteCard } from "../api/cards";
+import { getBoardColumns } from "../../api/boards";
+import { deleteCard } from "../../api/cards";
+import EditBoardModal from "./EditBoardModal";
+import { useState } from "react";
 
 interface BoardProps {
   board: BoardI;
@@ -14,6 +16,9 @@ interface BoardProps {
 
 const Board = ({ board }: BoardProps) => {
   const queryClient = useQueryClient();
+
+  const [isEditBoardModalOpen, setIsEditBoardModalOpen] =
+    useState<boolean>(false);
 
   const { data: columns, isLoading } = useQuery<ColumnI[]>({
     queryKey: ["boards", board.alias, "columns"],
@@ -41,6 +46,9 @@ const Board = ({ board }: BoardProps) => {
         >
           <Typography.Title level={3}>{board.name}</Typography.Title>
           <Typography.Text strong>#{board.alias}</Typography.Text>
+          <Button type="primary" onClick={() => setIsEditBoardModalOpen(true)}>
+            Edit
+          </Button>
         </div>
         <div
           style={{
@@ -57,6 +65,11 @@ const Board = ({ board }: BoardProps) => {
           )}
         </div>
       </DndContext>
+      <EditBoardModal
+        isOpen={isEditBoardModalOpen}
+        setIsOpen={setIsEditBoardModalOpen}
+        board={board}
+      />
     </div>
   );
 };

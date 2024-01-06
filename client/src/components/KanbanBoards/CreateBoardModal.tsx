@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { Form, Input, Modal, message } from "antd";
-import { CreateBoardPesponseI, createBoard } from "../api/boards";
+import { CreateBoardPesponseI, createBoard } from "../../api/boards";
 import { useForm } from "antd/es/form/Form";
 
 interface CreateBoardModalProps {

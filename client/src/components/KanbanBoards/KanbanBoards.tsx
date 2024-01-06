@@ -1,10 +1,10 @@
 import { Button, Form, Input, Spin, Typography } from "antd";
-import { BoardI } from "../types/board";
-import Board from "./Board";
+import { BoardI } from "../../types/board";
+import Board from "../Board/Board";
 import CreateBoardModal from "./CreateBoardModal";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { findBoard } from "../api/boards";
+import { findBoard } from "../../api/boards";
 
 const KanbanBoards = () => {
   const [isCreateBoardModalOpen, setIsCreateBoardModalOpen] =

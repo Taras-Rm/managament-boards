@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import KanbanBoards from "./components/KanbanBoards";
+import KanbanBoards from "./components/KanbanBoards/KanbanBoards";
 
 const queryClient = new QueryClient();
 

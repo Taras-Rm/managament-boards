@@ -75,7 +75,9 @@ const Column = ({ column }: ColumnProps) => {
         border: "1px solid black",
       }}
     >
-      <Typography.Title level={3}>{column.name}</Typography.Title>
+      <Typography.Title level={3} style={{ margin: 0 }}>
+        {column.name}
+      </Typography.Title>
       <div
         ref={columnRef}
         style={{
@@ -83,6 +85,8 @@ const Column = ({ column }: ColumnProps) => {
           width: "100%",
           padding: 10,
           overflow: "auto",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         {isLoading ? (
