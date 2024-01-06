@@ -63,28 +63,30 @@ describe('API e2e tests', () => {
           .expect((response) => {
             expect(response.res.body.columns).toHaveLength(3);
           })
-          .stores('boardId', 'board.id');
+          .stores('boardId', 'board.id')
+          .stores('boardAlias', 'board.alias');
       });
     });
 
-    describe('Get board', () => {
-      const notExistingBoardId: number = 99999;
+    describe('Find board', () => {
+      const notExistingBoardAlias: string = 'dhy48jdkdj';
 
-      it('not existing board id', () => {
+      it('not existing board alias', () => {
         return pactum
           .spec()
-          .get('/boards/{id}')
-          .withPathParams('id', notExistingBoardId)
+          .get('/boards/{alias}')
+          .withPathParams('alias', notExistingBoardAlias)
           .expectStatus(404);
       });
 
       it('ok', () => {
         return pactum
           .spec()
-          .get('/boards/{id}')
-          .withPathParams('id', '$S{boardId}')
+          .get('/boards/{alias}')
+          .withPathParams('alias', '$S{boardAlias}')
           .expectStatus(200)
-          .expectBodyContains('$S{boardId}');
+          .expectBodyContains('$S{boardId}')
+          .expectBodyContains('$S{boardAlias}');
       });
     });
 
@@ -201,7 +203,7 @@ describe('API e2e tests', () => {
             boardId: '$S{boardId}',
             columnId: 0,
           })
-          .expectStatus(400);
+          .expectStatus(404);
       });
 
       it('should return an error if not existing board id', () => {
@@ -213,7 +215,7 @@ describe('API e2e tests', () => {
             boardId: 0,
             columnId: '$S{columnId1}',
           })
-          .expectStatus(400);
+          .expectStatus(403);
       });
 
       it('ok', () => {
