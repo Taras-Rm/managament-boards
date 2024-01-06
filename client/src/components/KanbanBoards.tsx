@@ -1,6 +1,8 @@
 import { Button, Form, Input, Typography } from "antd";
 import { BoardI } from "../types/board";
 import Board from "./Board";
+import CreateBoardModal from "./CreateBoardModal";
+import { useState } from "react";
 
 const board: BoardI = {
   id: 1,
@@ -8,6 +10,9 @@ const board: BoardI = {
 };
 
 const KanbanBoards = () => {
+  const [isCreateBoardModalOpen, setIsCreateBoardModalOpen] =
+    useState<boolean>(false);
+
   return (
     <div
       style={{
@@ -21,6 +26,12 @@ const KanbanBoards = () => {
       <Typography.Title style={{ textAlign: "center" }}>
         Boards
       </Typography.Title>
+      <Button
+        style={{ width: 150, marginBottom: 20 }}
+        onClick={() => setIsCreateBoardModalOpen(true)}
+      >
+        Craete new
+      </Button>
       <div>
         <Form style={{ display: "flex" }}>
           <Form.Item style={{ width: "100%" }}>
@@ -32,6 +43,10 @@ const KanbanBoards = () => {
         </Form>
       </div>
       <Board board={board} />
+      <CreateBoardModal
+        isOpen={isCreateBoardModalOpen}
+        setIsOpen={setIsCreateBoardModalOpen}
+      />
     </div>
   );
 };
