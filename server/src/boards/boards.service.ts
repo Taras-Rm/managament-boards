@@ -100,6 +100,9 @@ export class BoardsService {
       where: {
         boardId: boardId,
       },
+      orderBy: {
+        position: 'asc',
+      },
     });
 
     return columns ? columns : [];
@@ -109,6 +112,9 @@ export class BoardsService {
     const cards = await this.prisma.card.findMany({
       where: {
         columnId: columnId,
+      },
+      orderBy: {
+        position: 'asc',
       },
     });
 
