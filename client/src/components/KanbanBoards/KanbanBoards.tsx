@@ -15,7 +15,6 @@ const KanbanBoards = () => {
   const { data: board, isLoading } = useQuery<BoardI>({
     queryKey: ["boards", alias],
     queryFn: () => findBoard(alias),
-    enabled: alias !== "",
     retry: 1,
   });
 

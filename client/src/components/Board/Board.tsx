@@ -1,11 +1,11 @@
-import { Button, Spin, Typography, message } from "antd";
+import { Button, Popconfirm, Spin, Typography, message } from "antd";
 import { BoardI } from "../../types/board";
 import { ColumnI } from "../../types/column";
 
 import Column from "../Column";
 import { DndContext } from "@dnd-kit/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getBoardColumns } from "../../api/boards";
+import { deleteBoard, getBoardColumns } from "../../api/boards";
 import { deleteCard } from "../../api/cards";
 import EditBoardModal from "./EditBoardModal";
 import { useState } from "react";
@@ -24,6 +24,23 @@ const Board = ({ board }: BoardProps) => {
     queryKey: ["boards", board.alias, "columns"],
     queryFn: () => getBoardColumns(board.id),
   });
+
+  const deleteBoardMutation = useMutation({
+    mutationFn: () => deleteBoard(board.id),
+    onSuccess: () => {
+      message.success("Board deleted!");
+      queryClient.invalidateQueries({
+        queryKey: ["boards", board.alias],
+      });
+    },
+    onError: () => {
+      message.error("Failed to delete a board");
+    },
+  });
+
+  const handleDeleteBoard = () => {
+    deleteBoardMutation.mutate();
+  };
 
   return (
     <div
@@ -49,6 +66,16 @@ const Board = ({ board }: BoardProps) => {
           <Button type="primary" onClick={() => setIsEditBoardModalOpen(true)}>
             Edit
           </Button>
+          <Popconfirm
+            title="Delete the board"
+            description="Are you sure to delete this board?"
+            onConfirm={handleDeleteBoard}
+            okText="Yes"
+            cancelText="No"
+            placement="left"
+          >
+            <Button danger>Delete</Button>
+          </Popconfirm>
         </div>
         <div
           style={{

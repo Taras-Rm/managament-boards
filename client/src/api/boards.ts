@@ -49,3 +49,8 @@ export const getBoardColumnCards = async (
   );
   return response.data;
 };
+
+export const deleteBoard = async (boardId: number) => {
+  const response = await api.delete(`/boards/${boardId}`);
+  return response.data;
+};
