@@ -7,6 +7,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateCardDto } from './dto/create-card.dto';
 import { EditCardDto } from './dto/edit-card.dto';
 
+const defaultCardTitle = 'Title';
+
 @Injectable()
 export class CardsService {
   constructor(private prisma: PrismaService) {}
@@ -36,13 +38,15 @@ export class CardsService {
       },
     });
 
+    const cardTitle = dto.title ? dto.title : defaultCardTitle;
+
     const cardPosition = cardWithMaxPosition
       ? cardWithMaxPosition.position + 1
       : 1;
 
     const createdCard = await this.prisma.card.create({
       data: {
-        title: dto.title,
+        title: cardTitle,
         description: dto.description,
         columnId: dto.columnId,
         position: cardPosition,

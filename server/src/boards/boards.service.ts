@@ -1,12 +1,9 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { EditBoardDto } from './dto/edit-board.dto';
 import { COLUMNS } from './constants/constants';
+import { randomBytes } from 'node:crypto';
 
 @Injectable()
 export class BoardsService {
@@ -17,14 +14,15 @@ export class BoardsService {
       const createdBoard = await tx.board.create({
         data: {
           name: dto.name,
+          alias: randomBytes(5).toString('hex'),
         },
       });
 
       await tx.column.createMany({
         data: [
-          { boardId: createdBoard.id, name: COLUMNS.TO_DO },
-          { boardId: createdBoard.id, name: COLUMNS.IN_PROGRESS },
-          { boardId: createdBoard.id, name: COLUMNS.DONE },
+          { boardId: createdBoard.id, name: COLUMNS.TO_DO, position: 1 },
+          { boardId: createdBoard.id, name: COLUMNS.IN_PROGRESS, position: 2 },
+          { boardId: createdBoard.id, name: COLUMNS.DONE, position: 3 },
         ],
       });
 
@@ -83,10 +81,10 @@ export class BoardsService {
     return updatedBoard;
   }
 
-  async getBoardById(boardId: number) {
-    const board = await this.prisma.board.findUnique({
+  async getBoardByAlias(boardAlias: string) {
+    const board = await this.prisma.board.findFirst({
       where: {
-        id: boardId,
+        alias: boardAlias,
       },
     });
 
@@ -102,6 +100,9 @@ export class BoardsService {
       where: {
         boardId: boardId,
       },
+      orderBy: {
+        position: 'asc',
+      },
     });
 
     return columns ? columns : [];
@@ -111,6 +112,9 @@ export class BoardsService {
     const cards = await this.prisma.card.findMany({
       where: {
         columnId: columnId,
+      },
+      orderBy: {
+        position: 'asc',
       },
     });
 
