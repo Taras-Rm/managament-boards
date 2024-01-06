@@ -4,14 +4,7 @@ import {
   EditTwoTone,
 } from "@ant-design/icons";
 import { CardI } from "../types/card";
-import {
-  Button,
-  Card as CardAntd,
-  Form,
-  Input,
-  Typography,
-  message,
-} from "antd";
+import { Card as CardAntd, Form, Input, Typography, message } from "antd";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { editCard } from "../api/cards";
@@ -92,9 +85,11 @@ const Card = ({ card, handleDeleteCard, boardId }: CardProps) => {
         <Typography.Text strong style={{ marginBottom: 5 }}>
           {card.title}
         </Typography.Text>
-        <Typography.Text type="secondary">
-          {card.description ? card.description : "No description..."}
-        </Typography.Text>
+        {card.description ? (
+          <Typography.Text>{card.description}</Typography.Text>
+        ) : (
+          <Typography.Text type="secondary">No description...</Typography.Text>
+        )}
         <div
           style={{
             display: "flex",

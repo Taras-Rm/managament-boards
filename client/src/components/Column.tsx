@@ -4,7 +4,8 @@ import { ColumnI } from "../types/column";
 import Card from "./Card";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getBoardColumnCards } from "../api/boards";
-import { createCard, deleteCard, editCard } from "../api/cards";
+import { createCard, deleteCard } from "../api/cards";
+import { useEffect, useRef } from "react";
 
 interface ColumnProps {
   column: ColumnI;
@@ -12,6 +13,7 @@ interface ColumnProps {
 
 const Column = ({ column }: ColumnProps) => {
   const queryClient = useQueryClient();
+  const columnRef = useRef<HTMLDivElement | null>(null);
 
   const { data: cards, isLoading } = useQuery<CardI[]>({
     queryKey: ["boards", column.boardId, "columns", column.id, "cards"],
@@ -53,6 +55,12 @@ const Column = ({ column }: ColumnProps) => {
     });
   };
 
+  useEffect(() => {
+    if (columnRef.current && createCardMutation.isSuccess) {
+      columnRef.current.scrollTop = columnRef.current.scrollHeight;
+    }
+  }, [cards]);
+
   return (
     <div
       style={{
@@ -63,12 +71,13 @@ const Column = ({ column }: ColumnProps) => {
         justifyContent: "space-between",
         alignItems: "center",
         borderRadius: "10px 10px 0 0",
-        paddingTop: 20,
+        paddingTop: 10,
         border: "1px solid black",
       }}
     >
       <Typography.Title level={3}>{column.name}</Typography.Title>
       <div
+        ref={columnRef}
         style={{
           height: "300px",
           width: "100%",
