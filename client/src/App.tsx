@@ -1,7 +1,7 @@
-import "./App.css";
+import KanbanBoards from "./components/KanbanBoards";
 
 function App() {
-  return <div className="App">App</div>;
+  return <KanbanBoards />;
 }
 
 export default App;
