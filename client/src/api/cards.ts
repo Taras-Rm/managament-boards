@@ -26,3 +26,17 @@ export const deleteCard = async (cardId: number) => {
   const response = await api.delete(`/cards/${cardId}`);
   return response.data;
 };
+
+interface EditCardI {
+  title: string;
+  description?: string;
+  cardId: number;
+}
+
+export const editCard = async ({ title, description, cardId }: EditCardI) => {
+  const response = await api.put(`/cards/${cardId}`, {
+    title,
+    description,
+  });
+  return response.data;
+};

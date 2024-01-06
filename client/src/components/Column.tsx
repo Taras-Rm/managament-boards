@@ -4,7 +4,7 @@ import { ColumnI } from "../types/column";
 import Card from "./Card";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getBoardColumnCards } from "../api/boards";
-import { createCard, deleteCard } from "../api/cards";
+import { createCard, deleteCard, editCard } from "../api/cards";
 
 interface ColumnProps {
   column: ColumnI;
@@ -85,6 +85,7 @@ const Column = ({ column }: ColumnProps) => {
               key={card.id}
               card={card}
               handleDeleteCard={handleDeleteCard}
+              boardId={column.boardId}
             />
           ))
         )}
