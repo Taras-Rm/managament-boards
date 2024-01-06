@@ -18,11 +18,22 @@ export const createBoard = async ({ name }: CreateBoardI) => {
   return response.data;
 };
 
-export interface CreateBoardI {
-  name: string;
-}
-
 export const findBoard = async (alias: string) => {
   const response = await api.get(`/boards/${alias}`);
+  return response.data;
+};
+
+export const getBoardColumns = async (boardId: number) => {
+  const response = await api.get(`/boards/${boardId}/columns`);
+  return response.data;
+};
+
+export const getBoardColumnCards = async (
+  boardId: number,
+  columnId: number
+) => {
+  const response = await api.get(
+    `/boards/${boardId}/columns/${columnId}/cards`
+  );
   return response.data;
 };

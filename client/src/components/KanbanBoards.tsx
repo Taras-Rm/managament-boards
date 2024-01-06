@@ -52,7 +52,9 @@ const KanbanBoards = () => {
             <Input placeholder="Enter board alias (max 10 characters)" />
           </Form.Item>
           <Form.Item style={{ marginLeft: 20 }}>
-            <Button htmlType="submit">Load</Button>
+            <Button htmlType="submit" type="primary" style={{ width: 200 }}>
+              Load
+            </Button>
           </Form.Item>
         </Form>
       </div>

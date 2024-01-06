@@ -1,21 +1,25 @@
-import { Typography } from "antd";
+import { Spin, Typography, message } from "antd";
 import { BoardI } from "../types/board";
 import { ColumnI } from "../types/column";
 
 import Column from "./Column";
 import { DndContext } from "@dnd-kit/core";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getBoardColumns } from "../api/boards";
+import { deleteCard } from "../api/cards";
 
 interface BoardProps {
   board: BoardI;
 }
 
-const columns: ColumnI[] = [
-  { id: 1, name: "To Do", boardId: 1 },
-  { id: 2, name: "In Progress", boardId: 1 },
-  { id: 3, name: "Done", boardId: 1 },
-];
-
 const Board = ({ board }: BoardProps) => {
+  const queryClient = useQueryClient();
+
+  const { data: columns, isLoading } = useQuery<ColumnI[]>({
+    queryKey: ["boards", board.alias, "columns"],
+    queryFn: () => getBoardColumns(board.id),
+  });
+
   return (
     <div
       style={{
@@ -41,13 +45,16 @@ const Board = ({ board }: BoardProps) => {
         <div
           style={{
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "space-evenly",
             height: "100%",
           }}
         >
-          {columns.map((col) => (
-            <Column column={col} />
-          ))}
+          {isLoading ? (
+            <Spin spinning />
+          ) : (
+            columns &&
+            columns.map((col) => <Column key={col.id} column={col} />)
+          )}
         </div>
       </DndContext>
     </div>
