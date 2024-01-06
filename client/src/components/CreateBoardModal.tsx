@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { Form, Input, Modal, message } from "antd";
-import { createBoard } from "../api/boards";
+import { CreateBoardPesponseI, createBoard } from "../api/boards";
 import { useForm } from "antd/es/form/Form";
 
 interface CreateBoardModalProps {
@@ -12,8 +12,8 @@ const CreateBoardModal = ({ isOpen, setIsOpen }: CreateBoardModalProps) => {
   const [form] = useForm();
   const createBoardMutation = useMutation({
     mutationFn: createBoard,
-    onSuccess: () => {
-      message.success("New board created");
+    onSuccess: (data: CreateBoardPesponseI) => {
+      message.success(`New board created. Board alias: ${data.board.alias}.`);
       setIsOpen(false);
     },
     onError: () => {
@@ -35,7 +35,12 @@ const CreateBoardModal = ({ isOpen, setIsOpen }: CreateBoardModalProps) => {
       onOk={() => form.submit()}
       onCancel={() => setIsOpen(false)}
     >
-      <Form form={form} onFinish={handleCreateBoard} layout="vertical" requiredMark={false}>
+      <Form
+        form={form}
+        onFinish={handleCreateBoard}
+        layout="vertical"
+        requiredMark={false}
+      >
         <Form.Item label="Name" name={"name"} rules={[{ required: true }]}>
           <Input placeholder="Name" />
         </Form.Item>

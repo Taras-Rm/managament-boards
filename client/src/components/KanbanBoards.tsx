@@ -1,17 +1,27 @@
-import { Button, Form, Input, Typography } from "antd";
+import { Button, Form, Input, Spin, Typography } from "antd";
 import { BoardI } from "../types/board";
 import Board from "./Board";
 import CreateBoardModal from "./CreateBoardModal";
 import { useState } from "react";
-
-const board: BoardI = {
-  id: 1,
-  name: "First board",
-};
+import { useQuery } from "@tanstack/react-query";
+import { findBoard } from "../api/boards";
 
 const KanbanBoards = () => {
   const [isCreateBoardModalOpen, setIsCreateBoardModalOpen] =
     useState<boolean>(false);
+
+  const [alias, setAlias] = useState<string>("");
+
+  const { data: board, isLoading } = useQuery<BoardI>({
+    queryKey: ["boards", alias],
+    queryFn: () => findBoard(alias),
+    enabled: alias !== "",
+    retry: 1,
+  });
+
+  const handleFindBoard = (values: any) => {
+    setAlias(values.alias);
+  };
 
   return (
     <div
@@ -33,16 +43,28 @@ const KanbanBoards = () => {
         Craete new
       </Button>
       <div>
-        <Form style={{ display: "flex" }}>
-          <Form.Item style={{ width: "100%" }}>
-            <Input />
+        <Form style={{ display: "flex" }} onFinish={handleFindBoard}>
+          <Form.Item
+            style={{ width: "100%" }}
+            rules={[{ required: true, max: 10 }]}
+            name={"alias"}
+          >
+            <Input placeholder="Enter board alias (max 10 characters)" />
           </Form.Item>
           <Form.Item style={{ marginLeft: 20 }}>
-            <Button>Load</Button>
+            <Button htmlType="submit">Load</Button>
           </Form.Item>
         </Form>
       </div>
-      <Board board={board} />
+      {isLoading ? (
+        <Spin style={{ marginTop: 40 }} size="large" />
+      ) : board ? (
+        <Board board={board} />
+      ) : (
+        <Typography.Text style={{ textAlign: "center", fontSize: 30 }}>
+          Board not found
+        </Typography.Text>
+      )}
       <CreateBoardModal
         isOpen={isCreateBoardModalOpen}
         setIsOpen={setIsCreateBoardModalOpen}

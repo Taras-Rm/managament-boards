@@ -35,8 +35,8 @@ const Board = ({ board }: BoardProps) => {
             alignItems: "center",
           }}
         >
-          <Typography.Title level={4}>jhhj</Typography.Title>
-          <Typography.Text>#jjdsjdjs</Typography.Text>
+          <Typography.Title level={3}>{board.name}</Typography.Title>
+          <Typography.Text strong>#{board.alias}</Typography.Text>
         </div>
         <div
           style={{
