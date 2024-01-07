@@ -2,7 +2,12 @@ import { Button, Popconfirm, Spin, Typography, message } from "antd";
 import { BoardI } from "../../types/board";
 import { ColumnI } from "../../types/column";
 import Column from "../Column";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  UseMutationResult,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { deleteBoard, getBoardColumnsCards } from "../../api/boards";
 import EditBoardModal from "./EditBoardModal";
 import { useState } from "react";
@@ -11,9 +16,10 @@ import { changeCardPosition } from "../../api/cards";
 
 interface BoardProps {
   board: BoardI;
+  deleteBoardMutation: UseMutationResult<any, Error, number, unknown>;
 }
 
-const Board = ({ board }: BoardProps) => {
+const Board = ({ board, deleteBoardMutation }: BoardProps) => {
   const queryClient = useQueryClient();
 
   const [isEditBoardModalOpen, setIsEditBoardModalOpen] =
@@ -25,22 +31,8 @@ const Board = ({ board }: BoardProps) => {
     queryFn: () => getBoardColumnsCards(board.id),
   });
 
-  // Delete board mutation
-  const deleteBoardMutation = useMutation({
-    mutationFn: () => deleteBoard(board.id),
-    onSuccess: () => {
-      message.success("Board deleted!");
-      queryClient.invalidateQueries({
-        queryKey: ["boards", board.alias],
-      });
-    },
-    onError: () => {
-      message.error("Failed to delete a board");
-    },
-  });
-
   const handleDeleteBoard = () => {
-    deleteBoardMutation.mutate();
+    deleteBoardMutation.mutate(board.id);
   };
 
   // Change card position mutation
@@ -60,7 +52,6 @@ const Board = ({ board }: BoardProps) => {
     if (!result.destination) return;
 
     // Call to api for position update
-    console.log(result);
     changeCardPositionMutation.mutate({
       cardId: Number(result.draggableId),
       boardId: board.id,
