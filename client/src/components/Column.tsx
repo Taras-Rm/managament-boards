@@ -6,28 +6,24 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getBoardColumnCards } from "../api/boards";
 import { createCard, deleteCard } from "../api/cards";
 import { useEffect, useRef } from "react";
+import { Draggable, DroppableProvided } from "react-beautiful-dnd";
 
 interface ColumnProps {
   column: ColumnI;
+  provided: DroppableProvided;
 }
 
-const Column = ({ column }: ColumnProps) => {
+const Column = ({ column, provided }: ColumnProps) => {
   const queryClient = useQueryClient();
 
   const columnRef = useRef<HTMLDivElement | null>(null);
-
-  // Get column cards
-  const { data: cards, isLoading } = useQuery<CardI[]>({
-    queryKey: ["boards", column.boardId, "columns", column.id, "cards"],
-    queryFn: () => getBoardColumnCards(column.boardId, column.id),
-  });
 
   // Delete card mutation
   const deleteCardMutation = useMutation({
     mutationFn: deleteCard,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["boards", column.boardId, "columns", column.id, "cards"],
+        queryKey: ["boards", column.boardId, "columns", "cards"],
       });
     },
     onError: () => {
@@ -44,7 +40,7 @@ const Column = ({ column }: ColumnProps) => {
     mutationFn: createCard,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["boards", column.boardId, "columns", column.id, "cards"],
+        queryKey: ["boards", column.boardId, "columns", "cards"],
       });
     },
     onError: () => {
@@ -64,7 +60,7 @@ const Column = ({ column }: ColumnProps) => {
     if (columnRef.current && createCardMutation.isSuccess) {
       columnRef.current.scrollTop = columnRef.current.scrollHeight;
     }
-  }, [cards]);
+  }, [column.cards]);
 
   return (
     <div
@@ -79,6 +75,8 @@ const Column = ({ column }: ColumnProps) => {
         paddingTop: 10,
         border: "1px solid black",
       }}
+      {...provided.droppableProps}
+      ref={provided.innerRef}
     >
       <Typography.Title level={3} style={{ margin: 0 }}>
         {column.name}
@@ -94,19 +92,29 @@ const Column = ({ column }: ColumnProps) => {
           flexDirection: "column",
         }}
       >
-        {isLoading ? (
-          <Spin spinning />
-        ) : (
-          cards &&
-          cards.map((card) => (
-            <Card
-              key={card.id}
-              card={card}
-              handleDeleteCard={handleDeleteCard}
-              boardId={column.boardId}
-            />
-          ))
-        )}
+        {column.cards &&
+          column.cards.map((card, index) => (
+            <Draggable key={card.id} draggableId={`${card.id}`} index={index}>
+              {(provided, snapshot) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.dragHandleProps}
+                  {...provided.draggableProps}
+                  style={{
+                    ...provided.draggableProps.style,
+                    opacity: snapshot.isDragging ? "0.5" : "1",
+                  }}
+                >
+                  <Card
+                    card={card}
+                    handleDeleteCard={handleDeleteCard}
+                    boardId={column.boardId}
+                  />
+                </div>
+              )}
+            </Draggable>
+          ))}
+        {provided.placeholder}
       </div>
       <div style={{ width: "100%" }}>
         <Button

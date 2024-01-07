@@ -3,9 +3,10 @@ import { BoardI } from "../../types/board";
 import { ColumnI } from "../../types/column";
 import Column from "../Column";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteBoard, getBoardColumns } from "../../api/boards";
+import { deleteBoard, getBoardColumnsCards } from "../../api/boards";
 import EditBoardModal from "./EditBoardModal";
 import { useState } from "react";
+import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
 
 interface BoardProps {
   board: BoardI;
@@ -17,10 +18,10 @@ const Board = ({ board }: BoardProps) => {
   const [isEditBoardModalOpen, setIsEditBoardModalOpen] =
     useState<boolean>(false);
 
-  // Get board columns
-  const { data: columns, isLoading } = useQuery<ColumnI[]>({
-    queryKey: ["boards", board.alias, "columns"],
-    queryFn: () => getBoardColumns(board.id),
+  // Get board columns cards
+  const { data: columnsCards, isLoading } = useQuery<ColumnI[]>({
+    queryKey: ["boards", board.id, "columns", "cards"],
+    queryFn: () => getBoardColumnsCards(board.id),
   });
 
   // Delete board mutation
@@ -41,6 +42,13 @@ const Board = ({ board }: BoardProps) => {
     deleteBoardMutation.mutate();
   };
 
+  const onDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+
+    // Call to api for position update
+    console.log(result);
+  };
+
   return (
     <div
       style={{
@@ -52,42 +60,56 @@ const Board = ({ board }: BoardProps) => {
         flexDirection: "column",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Typography.Title level={3}>{board.name}</Typography.Title>
-        <Typography.Text strong>#{board.alias}</Typography.Text>
-        <Button type="primary" onClick={() => setIsEditBoardModalOpen(true)}>
-          Edit
-        </Button>
-        <Popconfirm
-          title="Delete the board"
-          description="Are you sure to delete this board?"
-          onConfirm={handleDeleteBoard}
-          okText="Yes"
-          cancelText="No"
-          placement="left"
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
         >
-          <Button danger>Delete</Button>
-        </Popconfirm>
-      </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-evenly",
-          height: "100%",
-        }}
-      >
-        {isLoading ? (
-          <Spin spinning />
-        ) : (
-          columns && columns.map((col) => <Column key={col.id} column={col} />)
-        )}
-      </div>
+          <Typography.Title level={3}>{board.name}</Typography.Title>
+          <Typography.Text strong>#{board.alias}</Typography.Text>
+          <Button type="primary" onClick={() => setIsEditBoardModalOpen(true)}>
+            Edit
+          </Button>
+          <Popconfirm
+            title="Delete the board"
+            description="Are you sure to delete this board?"
+            onConfirm={handleDeleteBoard}
+            okText="Yes"
+            cancelText="No"
+            placement="left"
+          >
+            <Button danger>Delete</Button>
+          </Popconfirm>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-evenly",
+            height: "100%",
+          }}
+        >
+          {isLoading ? (
+            <Spin spinning />
+          ) : (
+            columnsCards &&
+            columnsCards.map((column) => (
+              <Droppable key={column.id} droppableId={`${column.id}`}>
+                {(provided) => (
+                  <Column
+                    key={column.id}
+                    column={column}
+                    provided={provided}
+                  />
+                )}
+              </Droppable>
+            ))
+          )}
+        </div>
+      </DragDropContext>
+
       <EditBoardModal
         isOpen={isEditBoardModalOpen}
         setIsOpen={setIsEditBoardModalOpen}

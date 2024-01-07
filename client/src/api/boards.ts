@@ -54,3 +54,12 @@ export const deleteBoard = async (boardId: number) => {
   const response = await api.delete(`/boards/${boardId}`);
   return response.data;
 };
+
+export interface CreateBoardColumnsCardsPesponseI {
+  columns: ColumnI[];
+}
+
+export const getBoardColumnsCards = async (boardId: number) => {
+  const response = await api.get(`/boards/${boardId}/cards`);
+  return response.data;
+};

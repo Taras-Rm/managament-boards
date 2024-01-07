@@ -46,7 +46,7 @@ const Card = ({ card, handleDeleteCard, boardId }: CardProps) => {
 
   if (isEditMode) {
     return (
-      <CardAntd style={{ marginBottom: 10 }} bodyStyle={{ padding: 10 }}>
+      <CardAntd style={{ marginBottom: 10 }} bodyStyle={{ padding: 10 }} >
         <Form
           form={form}
           initialValues={card}
@@ -81,7 +81,7 @@ const Card = ({ card, handleDeleteCard, boardId }: CardProps) => {
   }
 
   return (
-    <CardAntd style={{ marginBottom: 10 }} bodyStyle={{ padding: 10 }}>
+    <CardAntd bodyStyle={{ padding: 10 }} style={{ marginBottom: 10 }}>
       <div style={{ display: "flex", flexDirection: "column" }}>
         <Typography.Text strong style={{ marginBottom: 5 }}>
           {card.title}
