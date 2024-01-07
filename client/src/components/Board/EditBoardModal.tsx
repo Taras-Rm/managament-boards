@@ -1,19 +1,20 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Form, Input, Modal, message } from "antd";
-import { CreateBoardPesponseI, editBoard } from "../../api/boards";
+import { editBoard } from "../../api/boards";
 import { useForm } from "antd/es/form/Form";
 import { BoardI } from "../../types/board";
 
 interface EditBoardModalProps {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   board: BoardI;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const EditBoardModal = ({ isOpen, setIsOpen, board }: EditBoardModalProps) => {
+const EditBoardModal = ({ isOpen, board, setIsOpen }: EditBoardModalProps) => {
   const queryClient = useQueryClient();
   const [form] = useForm();
 
+  // Edit board mutation
   const editBoardMutation = useMutation({
     mutationFn: editBoard,
     onSuccess: () => {

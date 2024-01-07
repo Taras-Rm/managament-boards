@@ -4,7 +4,14 @@ import {
   EditTwoTone,
 } from "@ant-design/icons";
 import { CardI } from "../types/card";
-import { Card as CardAntd, Form, Input, Typography, message } from "antd";
+import {
+  Card as CardAntd,
+  Form,
+  Input,
+  Tooltip,
+  Typography,
+  message,
+} from "antd";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { editCard } from "../api/cards";
@@ -12,8 +19,8 @@ import { useForm } from "antd/es/form/Form";
 
 interface CardProps {
   card: CardI;
-  handleDeleteCard: (cardId: number) => void;
   boardId: number;
+  handleDeleteCard: (cardId: number) => void;
 }
 
 const Card = ({ card, handleDeleteCard, boardId }: CardProps) => {
@@ -22,11 +29,12 @@ const Card = ({ card, handleDeleteCard, boardId }: CardProps) => {
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
+  // Edit card mutation
   const editCardMutation = useMutation({
     mutationFn: editCard,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["boards", boardId, "columns", card.columnId, "cards"],
+        queryKey: ["boards", boardId, "columns", "cards"],
       });
       setIsEditMode(false);
     },
@@ -45,7 +53,12 @@ const Card = ({ card, handleDeleteCard, boardId }: CardProps) => {
 
   if (isEditMode) {
     return (
-      <CardAntd style={{ marginBottom: 10 }} bodyStyle={{ padding: 10 }}>
+      <CardAntd
+        bodyStyle={{ padding: 10 }}
+        style={{
+          marginBottom: 10,
+        }}
+      >
         <Form
           form={form}
           initialValues={card}
@@ -68,11 +81,13 @@ const Card = ({ card, handleDeleteCard, boardId }: CardProps) => {
             />
           </Form.Item>
           <Form.Item style={{ margin: 0, textAlign: "center" }}>
-            <CheckCircleTwoTone
-              twoToneColor={"#00ac00"}
-              style={{ cursor: "pointer" }}
-              onClick={() => form.submit()}
-            />
+            <Tooltip title="Update" placement="bottom">
+              <CheckCircleTwoTone
+                twoToneColor={"#00ac00"}
+                style={{ cursor: "pointer" }}
+                onClick={() => form.submit()}
+              />
+            </Tooltip>
           </Form.Item>
         </Form>
       </CardAntd>
@@ -80,7 +95,10 @@ const Card = ({ card, handleDeleteCard, boardId }: CardProps) => {
   }
 
   return (
-    <CardAntd style={{ marginBottom: 10 }} bodyStyle={{ padding: 10 }}>
+    <CardAntd
+      bodyStyle={{ padding: 10 }}
+      style={{ marginBottom: 10, backgroundColor: "#F5F5F5" }}
+    >
       <div style={{ display: "flex", flexDirection: "column" }}>
         <Typography.Text strong style={{ marginBottom: 5 }}>
           {card.title}

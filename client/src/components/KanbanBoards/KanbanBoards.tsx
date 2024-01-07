@@ -12,10 +12,11 @@ const KanbanBoards = () => {
 
   const [alias, setAlias] = useState<string>("");
 
+  // Find board by alias (hash)
   const { data: board, isLoading } = useQuery<BoardI>({
     queryKey: ["boards", alias],
     queryFn: () => findBoard(alias),
-    enabled: alias !== "",
+    enabled: !!alias,
     retry: 1,
   });
 
@@ -26,14 +27,14 @@ const KanbanBoards = () => {
   return (
     <div
       style={{
-        backgroundColor: "rgb(207 207 207)",
+        backgroundColor: "white",
         height: "100vh",
         padding: 10,
         display: "flex",
         flexDirection: "column",
       }}
     >
-      <Typography.Title style={{ textAlign: "center" }}>
+      <Typography.Title style={{ textAlign: "center", marginBottom: 5 }}>
         Boards
       </Typography.Title>
       <Button
@@ -52,7 +53,11 @@ const KanbanBoards = () => {
             <Input placeholder="Enter board alias (max 10 characters)" />
           </Form.Item>
           <Form.Item style={{ marginLeft: 20 }}>
-            <Button htmlType="submit" type="primary" style={{ width: 200 }}>
+            <Button
+              htmlType="submit"
+              type="primary"
+              style={{ width: 200, backgroundColor: "#3469D0" }}
+            >
               Load
             </Button>
           </Form.Item>

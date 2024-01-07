@@ -39,16 +39,10 @@ export class BoardsController {
     return this.boardsService.deleteBoard(boardId);
   }
 
-  @Get(':id/columns')
-  getBoardColumns(@Param('id', ParseIntPipe) boardId: number) {
-    return this.boardsService.getBoardColumns(boardId);
-  }
-
-  @Get(':id/columns/:columnId/cards')
-  getBoardColumnCards(
+  @Get(':id/cards')
+  getBoardColumnsCards(
     @Param('id', ParseIntPipe) boardId: number,
-    @Param('columnId', ParseIntPipe) columnId: number,
   ) {
-    return this.boardsService.getBoardColumnCards(columnId);
+    return this.boardsService.getBoardColumnsCards(boardId);
   }
 }

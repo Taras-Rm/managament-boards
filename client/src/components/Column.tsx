@@ -1,30 +1,27 @@
-import { Button, Spin, Typography, message } from "antd";
-import { CardI } from "../types/card";
+import { Button, Typography, message } from "antd";
 import { ColumnI } from "../types/column";
 import Card from "./Card";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getBoardColumnCards } from "../api/boards";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createCard, deleteCard } from "../api/cards";
 import { useEffect, useRef } from "react";
+import { Draggable, DroppableProvided } from "react-beautiful-dnd";
 
 interface ColumnProps {
   column: ColumnI;
+  provided: DroppableProvided;
 }
 
-const Column = ({ column }: ColumnProps) => {
+const Column = ({ column, provided }: ColumnProps) => {
   const queryClient = useQueryClient();
+
   const columnRef = useRef<HTMLDivElement | null>(null);
 
-  const { data: cards, isLoading } = useQuery<CardI[]>({
-    queryKey: ["boards", column.boardId, "columns", column.id, "cards"],
-    queryFn: () => getBoardColumnCards(column.boardId, column.id),
-  });
-
+  // Delete card mutation
   const deleteCardMutation = useMutation({
     mutationFn: deleteCard,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["boards", column.boardId, "columns", column.id, "cards"],
+        queryKey: ["boards", column.boardId, "columns", "cards"],
       });
     },
     onError: () => {
@@ -36,11 +33,12 @@ const Column = ({ column }: ColumnProps) => {
     deleteCardMutation.mutate(cardId);
   };
 
+  // Create card mutation
   const createCardMutation = useMutation({
     mutationFn: createCard,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["boards", column.boardId, "columns", column.id, "cards"],
+        queryKey: ["boards", column.boardId, "columns", "cards"],
       });
     },
     onError: () => {
@@ -55,33 +53,37 @@ const Column = ({ column }: ColumnProps) => {
     });
   };
 
+  // Scroll to the newest created card in the column
   useEffect(() => {
     if (columnRef.current && createCardMutation.isSuccess) {
       columnRef.current.scrollTop = columnRef.current.scrollHeight;
     }
-  }, [cards]);
+  }, [column.cards, createCardMutation.isSuccess]);
 
   return (
     <div
       style={{
-        backgroundColor: "rgb(207 207 207)",
-        width: "25%",
+        backgroundColor: "#3469D0",
+        width: "30%",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
         alignItems: "center",
         borderRadius: "10px 10px 0 0",
         paddingTop: 10,
-        border: "1px solid black",
+        border: "1px solid #3469D0",
       }}
+      {...provided.droppableProps}
+      ref={provided.innerRef}
     >
-      <Typography.Title level={3} style={{ margin: 0 }}>
+      <Typography.Title level={3} style={{ margin: 0, color: "white" }}>
         {column.name}
       </Typography.Title>
       <div
         ref={columnRef}
         style={{
-          height: "300px",
+          backgroundColor: "white",
+          height: "350px",
           width: "100%",
           padding: 10,
           overflow: "auto",
@@ -89,19 +91,29 @@ const Column = ({ column }: ColumnProps) => {
           flexDirection: "column",
         }}
       >
-        {isLoading ? (
-          <Spin spinning />
-        ) : (
-          cards &&
-          cards.map((card) => (
-            <Card
-              key={card.id}
-              card={card}
-              handleDeleteCard={handleDeleteCard}
-              boardId={column.boardId}
-            />
-          ))
-        )}
+        {column.cards &&
+          column.cards.map((card, index) => (
+            <Draggable key={card.id} draggableId={`${card.id}`} index={index}>
+              {(provided, snapshot) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.dragHandleProps}
+                  {...provided.draggableProps}
+                  style={{
+                    ...provided.draggableProps.style,
+                    opacity: snapshot.isDragging ? "0.5" : "1",
+                  }}
+                >
+                  <Card
+                    card={card}
+                    handleDeleteCard={handleDeleteCard}
+                    boardId={column.boardId}
+                  />
+                </div>
+              )}
+            </Draggable>
+          ))}
+        {provided.placeholder}
       </div>
       <div style={{ width: "100%" }}>
         <Button
