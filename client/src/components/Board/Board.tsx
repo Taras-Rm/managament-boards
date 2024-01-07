@@ -93,7 +93,11 @@ const Board = ({ board }: BoardProps) => {
           )}
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <Button type="primary" onClick={() => setIsEditBoardModalOpen(true)}>
+          <Button
+            type="primary"
+            onClick={() => setIsEditBoardModalOpen(true)}
+            style={{ backgroundColor: "#3469D0" }}
+          >
             Edit
           </Button>
           <Popconfirm
