@@ -16,6 +16,7 @@ model Board {
   alias String @default("")
 
   columns Column[]
+  cards    Card[]
 
   @@map("boards")
 }
@@ -43,6 +44,9 @@ model Card {
 
   columnId Int
   column   Column @relation(fields: [columnId], references: [id], onDelete: Cascade)
+
+  boardId Int
+  board   Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
 
   @@map("cards")
 }

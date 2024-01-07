@@ -19,7 +19,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
-    "start:prod": "npm run prisma:prod:deploy && node dist/main",
+    "start:prod": "npm run prisma migrate dev && npm run prisma:prod:deploy && node dist/main",
     "lint": "eslint ./src/**/*.ts --fix",
     "pretest:e2e": "npm run db:test:restart",
     "test:e2e": "dotenv -e .env.test -- jest --watchAll --no-cache --config ./test/jest-e2e.json"

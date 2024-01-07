@@ -40,3 +40,24 @@ export const editCard = async ({ title, description, cardId }: EditCardI) => {
   });
   return response.data;
 };
+
+interface ChangeCardPositionI {
+  cardId: number;
+  boardId: number;
+  toColumnId: number;
+  toPosition: number;
+}
+
+export const changeCardPosition = async ({
+  cardId,
+  boardId,
+  toColumnId,
+  toPosition,
+}: ChangeCardPositionI) => {
+  const response = await api.put(`/cards/${cardId}/position`, {
+    toColumnId,
+    toPosition,
+    boardId,
+  });
+  return response.data;
+};

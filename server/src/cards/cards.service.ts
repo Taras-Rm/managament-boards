@@ -6,6 +6,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCardDto } from './dto/create-card.dto';
 import { EditCardDto } from './dto/edit-card.dto';
+import { ChangeCardPositionDto } from './dto/change-card-position.dto';
 
 const defaultCardTitle = 'Title';
 
@@ -48,6 +49,7 @@ export class CardsService {
       data: {
         title: cardTitle,
         description: dto.description,
+        boardId: dto.boardId,
         columnId: dto.columnId,
         position: cardPosition,
       },
@@ -99,5 +101,57 @@ export class CardsService {
     });
 
     return updatedCard;
+  }
+
+  async changeCardPosition(cardId: number, dto: ChangeCardPositionDto) {
+    return await this.prisma.$transaction(async (tx) => {
+      const card = await this.prisma.card.findUnique({
+        where: {
+          id: cardId,
+        },
+      });
+
+      // Update from column cards
+      await tx.card.updateMany({
+        where: {
+          position: {
+            gt: card.position,
+          },
+          boardId: dto.boardId,
+          columnId: card.columnId,
+        },
+        data: {
+          position: {
+            decrement: 1,
+          },
+        },
+      });
+
+      // Update to column cards
+      await tx.card.updateMany({
+        where: {
+          position: {
+            gte: dto.toPosition,
+          },
+          boardId: dto.boardId,
+          columnId: dto.toColumnId,
+        },
+        data: {
+          position: {
+            increment: 1,
+          },
+        },
+      });
+
+      await tx.card.update({
+        where: {
+          id: cardId,
+        },
+        data: {
+          columnId: dto.toColumnId,
+          position: dto.toPosition,
+        },
+      });
+    });
   }
 }
