@@ -1,12 +1,14 @@
-import { Button, Form, Input, Spin, Typography } from "antd";
+import { Button, Form, Input, Spin, Typography, message } from "antd";
 import { BoardI } from "../../types/board";
 import Board from "../Board/Board";
 import CreateBoardModal from "./CreateBoardModal";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { findBoard } from "../../api/boards";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { deleteBoard, findBoard } from "../../api/boards";
 
 const KanbanBoards = () => {
+  const queryClient = useQueryClient();
+
   const [isCreateBoardModalOpen, setIsCreateBoardModalOpen] =
     useState<boolean>(false);
 
@@ -23,6 +25,22 @@ const KanbanBoards = () => {
   const handleFindBoard = (values: any) => {
     setAlias(values.alias);
   };
+
+  // Delete board mutation
+  const deleteBoardMutation = useMutation({
+    mutationFn: deleteBoard,
+    onSuccess: () => {
+      message.success("Board deleted!");
+      if (board) {
+        queryClient.setQueryData(["boards", board?.alias], () => {
+          return null;
+        });
+      }
+    },
+    onError: () => {
+      message.error("Failed to delete a board");
+    },
+  });
 
   return (
     <div
@@ -66,7 +84,7 @@ const KanbanBoards = () => {
       {isLoading ? (
         <Spin style={{ marginTop: 40 }} size="large" />
       ) : board ? (
-        <Board board={board} />
+        <Board board={board} deleteBoardMutation={deleteBoardMutation} />
       ) : (
         <Typography.Text style={{ textAlign: "center", fontSize: 30 }}>
           Board not found
