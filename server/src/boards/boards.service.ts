@@ -95,29 +95,23 @@ export class BoardsService {
     return board;
   }
 
-  async getBoardColumns(boardId: number) {
-    const columns = await this.prisma.column.findMany({
+  async getBoardColumnsCards(boardId: number) {
+    const columnsCards = await this.prisma.column.findMany({
       where: {
         boardId: boardId,
       },
       orderBy: {
         position: 'asc',
       },
-    });
-
-    return columns ? columns : [];
-  }
-
-  async getBoardColumnCards(columnId: number) {
-    const cards = await this.prisma.card.findMany({
-      where: {
-        columnId: columnId,
-      },
-      orderBy: {
-        position: 'asc',
+      include: {
+        cards: {
+          orderBy: {
+            position: 'asc',
+          },
+        },
       },
     });
 
-    return cards;
+    return columnsCards;
   }
 }
