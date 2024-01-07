@@ -7,6 +7,7 @@ import { deleteBoard, getBoardColumnsCards } from "../../api/boards";
 import EditBoardModal from "./EditBoardModal";
 import { useState } from "react";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
+import { changeCardPosition } from "../../api/cards";
 
 interface BoardProps {
   board: BoardI;
@@ -42,11 +43,30 @@ const Board = ({ board }: BoardProps) => {
     deleteBoardMutation.mutate();
   };
 
+  // Change card position mutation
+  const changeCardPositionMutation = useMutation({
+    mutationFn: changeCardPosition,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["boards", board.id, "columns", "cards"],
+      });
+    },
+    onError: () => {
+      message.error("Failed to change card position");
+    },
+  });
+
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
     // Call to api for position update
     console.log(result);
+    changeCardPositionMutation.mutate({
+      cardId: Number(result.draggableId),
+      boardId: board.id,
+      toColumnId: Number(result.destination.droppableId),
+      toPosition: result.destination.index + 1,
+    });
   };
 
   return (
