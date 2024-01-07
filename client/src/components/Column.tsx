@@ -34,7 +34,11 @@ const Column = ({ column, provided }: ColumnProps) => {
   };
 
   // Create card mutation
-  const createCardMutation = useMutation({
+  const {
+    mutate: createCardMutation,
+    isPending: isLoadingAddCard,
+    isSuccess,
+  } = useMutation({
     mutationFn: createCard,
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -47,7 +51,7 @@ const Column = ({ column, provided }: ColumnProps) => {
   });
 
   const handleCreateCard = () => {
-    createCardMutation.mutate({
+    createCardMutation({
       columnId: column.id,
       boardId: column.boardId,
     });
@@ -55,10 +59,10 @@ const Column = ({ column, provided }: ColumnProps) => {
 
   // Scroll to the newest created card in the column
   useEffect(() => {
-    if (columnRef.current && createCardMutation.isSuccess) {
+    if (columnRef.current && isSuccess) {
       columnRef.current.scrollTop = columnRef.current.scrollHeight;
     }
-  }, [column.cards, createCardMutation.isSuccess]);
+  }, [column.cards, isSuccess]);
 
   return (
     <div
@@ -119,6 +123,7 @@ const Column = ({ column, provided }: ColumnProps) => {
         <Button
           style={{ width: "100%", borderRadius: 0 }}
           onClick={handleCreateCard}
+          loading={isLoadingAddCard}
         >
           Add card
         </Button>

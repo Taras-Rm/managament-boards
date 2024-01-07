@@ -70,13 +70,31 @@ export class CardsService {
       throw new NotFoundException('Card with such id does not exists');
     }
 
-    const deletedCard = await this.prisma.card.delete({
-      where: {
-        id: cardId,
-      },
-    });
+    return await this.prisma.$transaction(async (tx) => {
+      // Update from column cards
+      await tx.card.updateMany({
+        where: {
+          position: {
+            gt: card.position,
+          },
+          boardId: card.boardId,
+          columnId: card.columnId,
+        },
+        data: {
+          position: {
+            decrement: 1,
+          },
+        },
+      });
 
-    return deletedCard;
+      const deletedCard = await this.prisma.card.delete({
+        where: {
+          id: cardId,
+        },
+      });
+
+      return deletedCard;
+    });
   }
 
   async editCard(cardId: number, dto: EditCardDto) {

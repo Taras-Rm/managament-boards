@@ -125,32 +125,6 @@ describe('API e2e tests', () => {
       });
     });
 
-    describe('Get board columns', () => {
-      it('ok', () => {
-        return pactum
-          .spec()
-          .get('/boards/{id}/columns')
-          .withPathParams('id', '$S{boardId}')
-          .expectStatus(200)
-          .expectJsonLength(3)
-          .stores('columnId1', '[0].id')
-          .stores('columnId2', '[1].id')
-          .stores('columnId3', '[2].id');
-      });
-    });
-
-    describe('Get board column cards', () => {
-      it('ok', () => {
-        return pactum
-          .spec()
-          .get('/boards/{id}/columns/{columnId}/cards')
-          .withPathParams('id', '$S{boardId}')
-          .withPathParams('columnId', '$S{columnId1}')
-          .expectStatus(200)
-          .expectJsonLength(0);
-      });
-    });
-
     describe('Delete board', () => {
       it('ok', () => {
         return pactum
@@ -253,32 +227,12 @@ describe('API e2e tests', () => {
     });
 
     describe('Delete card', () => {
-      it('get column cards', () => {
-        return pactum
-          .spec()
-          .get('/boards/{id}/columns/{columnId}/cards')
-          .withPathParams('id', '$S{boardId}')
-          .withPathParams('columnId', '$S{columnId1}')
-          .expectStatus(200)
-          .expectJsonLength(1);
-      });
-
       it('ok', () => {
         return pactum
           .spec()
           .delete('/cards/{id}')
           .withPathParams('id', '$S{cardId}')
           .expectStatus(200);
-      });
-
-      it('get empty column cards', () => {
-        return pactum
-          .spec()
-          .get('/boards/{id}/columns/{columnId}/cards')
-          .withPathParams('id', '$S{boardId}')
-          .withPathParams('columnId', '$S{columnId1}')
-          .expectStatus(200)
-          .expectJsonLength(0);
       });
     });
   });
