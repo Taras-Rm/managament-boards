@@ -12,8 +12,8 @@ import { useForm } from "antd/es/form/Form";
 
 interface CardProps {
   card: CardI;
-  handleDeleteCard: (cardId: number) => void;
   boardId: number;
+  handleDeleteCard: (cardId: number) => void;
 }
 
 const Card = ({ card, handleDeleteCard, boardId }: CardProps) => {
@@ -22,6 +22,7 @@ const Card = ({ card, handleDeleteCard, boardId }: CardProps) => {
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
+  // Edit card mutation
   const editCardMutation = useMutation({
     mutationFn: editCard,
     onSuccess: () => {

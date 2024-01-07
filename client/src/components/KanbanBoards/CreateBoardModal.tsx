@@ -10,6 +10,8 @@ interface CreateBoardModalProps {
 
 const CreateBoardModal = ({ isOpen, setIsOpen }: CreateBoardModalProps) => {
   const [form] = useForm();
+
+  // Create new board mutation
   const createBoardMutation = useMutation({
     mutationFn: createBoard,
     onSuccess: (data: CreateBoardPesponseI) => {

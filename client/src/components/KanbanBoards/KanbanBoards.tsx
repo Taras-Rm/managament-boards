@@ -12,10 +12,11 @@ const KanbanBoards = () => {
 
   const [alias, setAlias] = useState<string>("");
 
+  // Find board by alias (hash)
   const { data: board, isLoading } = useQuery<BoardI>({
     queryKey: ["boards", alias],
     queryFn: () => findBoard(alias),
-    enabled: alias !== "",
+    enabled: !!alias,
     retry: 1,
   });
 

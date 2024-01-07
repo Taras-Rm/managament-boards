@@ -13,13 +13,16 @@ interface ColumnProps {
 
 const Column = ({ column }: ColumnProps) => {
   const queryClient = useQueryClient();
+
   const columnRef = useRef<HTMLDivElement | null>(null);
 
+  // Get column cards
   const { data: cards, isLoading } = useQuery<CardI[]>({
     queryKey: ["boards", column.boardId, "columns", column.id, "cards"],
     queryFn: () => getBoardColumnCards(column.boardId, column.id),
   });
 
+  // Delete card mutation
   const deleteCardMutation = useMutation({
     mutationFn: deleteCard,
     onSuccess: () => {
@@ -36,6 +39,7 @@ const Column = ({ column }: ColumnProps) => {
     deleteCardMutation.mutate(cardId);
   };
 
+  // Create card mutation
   const createCardMutation = useMutation({
     mutationFn: createCard,
     onSuccess: () => {
@@ -55,6 +59,7 @@ const Column = ({ column }: ColumnProps) => {
     });
   };
 
+  // Scroll to the newest created card in the column
   useEffect(() => {
     if (columnRef.current && createCardMutation.isSuccess) {
       columnRef.current.scrollTop = columnRef.current.scrollHeight;
