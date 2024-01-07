@@ -9,9 +9,9 @@ This is basic managament boards API.
 
 ## Run app
 
-Clone repository
+Clone repository (move to /server)
 ``` bash
-git clone https://github.com/Taras-Rm/managament-boards-api.git
+git clone https://github.com/Taras-Rm/managament-boards.git
 ```
 
 Install dependencies
@@ -29,53 +29,14 @@ Start the server
 npm run start:dev
 ```
 
+## Run tests
+
+``` bash
+npm run test:e2e
+```
+
 ## Environmebt variables
 
 To run project, you will need to add such environment variable in ```.env``` file:
 
 `DATABASE_URL="postgresql://user:password@host:port/dbname"`
-
-## API References
-
-- **POST** - /boards (_create new board)
-#### Request (example):
-```sh
-{
-    "name": "Board name",
-}
-```
-#### Response (example):
-```sh
-{
-    "board": {
-        "id": 1,
-        "name": "Board name"
-    },
-    "columns": [
-        {
-            "id": 1,
-            "name": "To Do",
-            "boardId": 1
-        },
-        {
-            "id": 2,
-            "name": "In Progress",
-            "boardId": 1
-        },
-        {
-            "id": 3,
-            "name": "Done",
-            "boardId": 1
-        }
-    ]
-}
-```
----
-- **PUT** - /boards/_:boardId_ (_get board_)
-#### Response (example):
-```sh
-{
-    "id": 1,
-    "name": "My first board"
-}
-```

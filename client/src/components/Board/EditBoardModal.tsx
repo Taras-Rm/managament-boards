@@ -15,22 +15,23 @@ const EditBoardModal = ({ isOpen, board, setIsOpen }: EditBoardModalProps) => {
   const [form] = useForm();
 
   // Edit board mutation
-  const editBoardMutation = useMutation({
-    mutationFn: editBoard,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["boards", board.alias],
-      });
-      message.success(`Board updated!`);
-      setIsOpen(false);
-    },
-    onError: () => {
-      message.error("Failed to update board");
-    },
-  });
+  const { mutate: editBoardMutation, isPending: isLoadingEditBoard } =
+    useMutation({
+      mutationFn: editBoard,
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["boards", board.alias],
+        });
+        message.success(`Board updated!`);
+        setIsOpen(false);
+      },
+      onError: () => {
+        message.error("Failed to update board");
+      },
+    });
 
   const handleEditBoard = (values: any) => {
-    editBoardMutation.mutate({
+    editBoardMutation({
       name: values.name,
       boardId: board.id,
     });
@@ -43,6 +44,7 @@ const EditBoardModal = ({ isOpen, board, setIsOpen }: EditBoardModalProps) => {
       okText={"Update"}
       onOk={() => form.submit()}
       onCancel={() => setIsOpen(false)}
+      okButtonProps={{ loading: isLoadingEditBoard }}
     >
       <Form
         form={form}

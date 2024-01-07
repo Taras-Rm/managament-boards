@@ -2,6 +2,7 @@ import {
   CheckCircleTwoTone,
   DeleteTwoTone,
   EditTwoTone,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import { CardI } from "../types/card";
 import {
@@ -30,21 +31,22 @@ const Card = ({ card, handleDeleteCard, boardId }: CardProps) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
   // Edit card mutation
-  const editCardMutation = useMutation({
-    mutationFn: editCard,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["boards", boardId, "columns", "cards"],
-      });
-      setIsEditMode(false);
-    },
-    onError: () => {
-      message.error("Failed to edit a card");
-    },
-  });
+  const { mutate: editCardMutation, isPending: isLoadingEditCard } =
+    useMutation({
+      mutationFn: editCard,
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["boards", boardId, "columns", "cards"],
+        });
+        setIsEditMode(false);
+      },
+      onError: () => {
+        message.error("Failed to edit a card");
+      },
+    });
 
   const handleEditCard = (values: any, cardId: number) => {
-    editCardMutation.mutate({
+    editCardMutation({
       title: values.title,
       description: values.description,
       cardId: cardId,
@@ -82,11 +84,15 @@ const Card = ({ card, handleDeleteCard, boardId }: CardProps) => {
           </Form.Item>
           <Form.Item style={{ margin: 0, textAlign: "center" }}>
             <Tooltip title="Update" placement="bottom">
-              <CheckCircleTwoTone
-                twoToneColor={"#00ac00"}
-                style={{ cursor: "pointer" }}
-                onClick={() => form.submit()}
-              />
+              {isLoadingEditCard ? (
+                <LoadingOutlined />
+              ) : (
+                <CheckCircleTwoTone
+                  twoToneColor={"#00ac00"}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => form.submit()}
+                />
+              )}
             </Tooltip>
           </Form.Item>
         </Form>
