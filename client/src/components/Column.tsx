@@ -1,9 +1,7 @@
-import { Button, Spin, Typography, message } from "antd";
-import { CardI } from "../types/card";
+import { Button, Typography, message } from "antd";
 import { ColumnI } from "../types/column";
 import Card from "./Card";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getBoardColumnCards } from "../api/boards";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createCard, deleteCard } from "../api/cards";
 import { useEffect, useRef } from "react";
 import { Draggable, DroppableProvided } from "react-beautiful-dnd";
@@ -60,31 +58,32 @@ const Column = ({ column, provided }: ColumnProps) => {
     if (columnRef.current && createCardMutation.isSuccess) {
       columnRef.current.scrollTop = columnRef.current.scrollHeight;
     }
-  }, [column.cards]);
+  }, [column.cards, createCardMutation.isSuccess]);
 
   return (
     <div
       style={{
-        backgroundColor: "rgb(207 207 207)",
-        width: "25%",
+        backgroundColor: "#3469D0",
+        width: "30%",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
         alignItems: "center",
         borderRadius: "10px 10px 0 0",
         paddingTop: 10,
-        border: "1px solid black",
+        border: "1px solid #3469D0",
       }}
       {...provided.droppableProps}
       ref={provided.innerRef}
     >
-      <Typography.Title level={3} style={{ margin: 0 }}>
+      <Typography.Title level={3} style={{ margin: 0, color: "white" }}>
         {column.name}
       </Typography.Title>
       <div
         ref={columnRef}
         style={{
-          height: "300px",
+          backgroundColor: "white",
+          height: "350px",
           width: "100%",
           padding: 10,
           overflow: "auto",

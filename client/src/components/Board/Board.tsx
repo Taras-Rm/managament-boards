@@ -52,7 +52,7 @@ const Board = ({ board }: BoardProps) => {
   return (
     <div
       style={{
-        backgroundColor: "white",
+        backgroundColor: "#F5F5F5",
         height: "100%",
         padding: 20,
         borderRadius: "10px",
@@ -70,6 +70,29 @@ const Board = ({ board }: BoardProps) => {
         >
           <Typography.Title level={3}>{board.name}</Typography.Title>
           <Typography.Text strong>#{board.alias}</Typography.Text>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            height: "100%",
+            marginBottom: 10,
+          }}
+        >
+          {isLoading ? (
+            <Spin spinning />
+          ) : (
+            columnsCards &&
+            columnsCards.map((column) => (
+              <Droppable key={column.id} droppableId={`${column.id}`}>
+                {(provided) => (
+                  <Column key={column.id} column={column} provided={provided} />
+                )}
+              </Droppable>
+            ))
+          )}
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <Button type="primary" onClick={() => setIsEditBoardModalOpen(true)}>
             Edit
           </Button>
@@ -81,32 +104,10 @@ const Board = ({ board }: BoardProps) => {
             cancelText="No"
             placement="left"
           >
-            <Button danger>Delete</Button>
+            <Button danger style={{ marginLeft: 10 }}>
+              Delete
+            </Button>
           </Popconfirm>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-evenly",
-            height: "100%",
-          }}
-        >
-          {isLoading ? (
-            <Spin spinning />
-          ) : (
-            columnsCards &&
-            columnsCards.map((column) => (
-              <Droppable key={column.id} droppableId={`${column.id}`}>
-                {(provided) => (
-                  <Column
-                    key={column.id}
-                    column={column}
-                    provided={provided}
-                  />
-                )}
-              </Droppable>
-            ))
-          )}
         </div>
       </DragDropContext>
 
