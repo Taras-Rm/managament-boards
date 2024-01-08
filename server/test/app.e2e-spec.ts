@@ -7,6 +7,7 @@ import { CreateBoardDto } from 'src/boards/dto/create-board.dto';
 import { EditBoardDto } from 'src/boards/dto/edit-board.dto';
 import { CreateCardDto } from 'src/cards/dto/create-card.dto';
 import { EditCardDto } from 'src/cards/dto/edit-card.dto';
+import { ChangeCardPositionDto } from 'src/cards/dto/change-card-position.dto';
 
 describe('API e2e tests', () => {
   let app: INestApplication;
@@ -68,7 +69,7 @@ describe('API e2e tests', () => {
       });
     });
 
-    describe('Find board', () => {
+    describe('Get board by alias', () => {
       const notExistingBoardAlias: string = 'dhy48jdkdj';
 
       it('not existing board alias', () => {
@@ -226,14 +227,61 @@ describe('API e2e tests', () => {
       });
     });
 
-    describe('Delete card', () => {
+    describe('Change card position', () => {
+      const dto: ChangeCardPositionDto = {
+        toPosition: 1,
+        toColumnId: 0,
+        boardId: 0,
+      };
+
+      it('should return an error if boardId is empty', () => {
+        const reqDto = dto;
+        delete reqDto['boardId'];
+        return pactum
+          .spec()
+          .put('/cards/{id}/position')
+          .withPathParams('id', '$S{cardId}')
+          .withBody({
+            ...reqDto,
+          })
+          .expectStatus(400);
+      });
+
+      it('should return an error if toColumnId is empty', () => {
+        const reqDto = dto;
+        delete reqDto['toColumnId'];
+        return pactum
+          .spec()
+          .put('/cards/{id}/position')
+          .withPathParams('id', '$S{cardId}')
+          .withBody({
+            ...reqDto,
+          })
+          .expectStatus(400);
+      });
+
       it('ok', () => {
         return pactum
           .spec()
-          .delete('/cards/{id}')
+          .put('/cards/{id}/position')
           .withPathParams('id', '$S{cardId}')
+          .withBody({
+            ...dto,
+            boardId: '$S{boardId}',
+            toColumnId: '$S{columnId3}',
+          })
           .expectStatus(200);
       });
+    });
+  });
+
+  describe('Delete card', () => {
+    it('ok', () => {
+      return pactum
+        .spec()
+        .delete('/cards/{id}')
+        .withPathParams('id', '$S{cardId}')
+        .expectStatus(200);
     });
   });
 });
