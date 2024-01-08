@@ -31,10 +31,6 @@ const Board = ({ board, deleteBoardMutation }: BoardProps) => {
     queryFn: () => getBoardColumnsCards(board.id),
   });
 
-  const handleDeleteBoard = () => {
-    deleteBoardMutation.mutate(board.id);
-  };
-
   // Change card position mutation
   const changeCardPositionMutation = useMutation({
     mutationFn: changeCardPosition,
@@ -58,6 +54,10 @@ const Board = ({ board, deleteBoardMutation }: BoardProps) => {
       toColumnId: Number(result.destination.droppableId),
       toPosition: result.destination.index + 1,
     });
+  };
+
+  const handleDeleteBoard = () => {
+    deleteBoardMutation.mutate(board.id);
   };
 
   return (
