@@ -9,3 +9,8 @@ DEMO: https://managament-boards-client.onrender.com/
 Server details: https://github.com/Taras-Rm/managament-boards/blob/dev/server/README.md
 
 Client details: https://github.com/Taras-Rm/managament-boards/blob/dev/client/README.md
+
+## Demo
+
+https://github.com/Taras-Rm/managament-boards/assets/81901260/7ad65693-a70b-4f35-8707-0995b0d5638d
+
